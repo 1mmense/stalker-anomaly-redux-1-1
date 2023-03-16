@@ -1,3 +1,6 @@
+-- Custom weight adder/multiplier with removal, written by demonized
+-- Based on Arti's speed.script
+
 local ceil = math.ceil
 
 local get_game_factor = game_difficulties.get_game_factor
@@ -6,11 +9,12 @@ local weights = {
     carry_weight = 0,
     --max_walk_weight = 0
 }
+
 local weight_adders = {}
 local weight_multipliers = {}
 local not_first_update = true
 
-local function actor_on_first_update() 
+local function actor_on_first_update()
     weights.carry_weight = get_game_factor("weight") or 20
     --weights.max_walk_weight = weights.carry_weight + (ceil(weights.carry_weight * 0.2) * 2)
     not_first_update = false
@@ -33,7 +37,7 @@ local function update_weights()
 
     local result_weight = weights.carry_weight * weight_multiply + weight_add
     local max_walk_weight = result_weight + (ceil(result_weight * 0.2) * 2)
-    
+
     -- printf("base speed: "..speeds[0])
     local actor = db.actor
     actor:set_actor_max_weight(result_weight)
@@ -81,7 +85,7 @@ function multiply_weight(key, multiplier, force)
     end
 end
 
--- Usage: Drop a weight. Once a weight addition is dropped, it will be recalculated and set. 
+-- Usage: Drop a weight. Once a weight addition is dropped, it will be recalculated and set.
 -- Params
 -- key - Name to drop.
 function remove_weight(key)

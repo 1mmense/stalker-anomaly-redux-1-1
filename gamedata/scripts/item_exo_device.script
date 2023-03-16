@@ -216,6 +216,10 @@ function charge_exo(battery, suit, data)
     if to_restore > 0 then
         data.power = data.power + to_restore
         batt_power = batt_power - to_restore
+
+        data.power = data.power - 1
+        batt_power = batt_power + 1
+
         if batt_power == 0 then
             alife_release(battery)
         else
@@ -293,7 +297,7 @@ end
 
 
 -- player slowing management
-local slow_coef = 1
+local slow_coef = 0.1
 local is_player_slowed = false
 local function slow_player()
     if not is_player_slowed then
@@ -331,16 +335,15 @@ function actor_on_update()
 end
 
 function exo_charged()
-    --local exosuit = db.actor:item_in_slot(7)
-    --
-    --if exosuit and is_exo(exosuit) then
-    --    local id = exosuit:id()
-    --    local data = get_data(id)
-    --    if not data then data = init_data(id) end
-    --    return data.power > 0
-    --end
-    --return false
-    return true
+    local exosuit = db.actor:item_in_slot(7)
+
+    if exosuit and is_exo(exosuit) then
+        local id = exosuit:id()
+        local data = get_data(id)
+        if not data then data = init_data(id) end
+        return data.power > 0
+    end
+    return false
 end
 
 -- modify drain by
@@ -365,9 +368,9 @@ function manage_drain()
         local sec = exosuit:section()
         local data = get_data(id)
         if not data then data = init_data(id) end
-        local base_drain = 0
-        -- base_drain = modify_drain(base_drain, data)
-        -- data.power = clamp(data.power - base_drain, 0, 400)
+        local base_drain = cache[sec] or 0.01
+        base_drain = modify_drain(base_drain, data)
+        data.power = clamp(data.power - base_drain, 0, 400)
         set_data(id, data)
 
         if warn and data.power > threshold then
