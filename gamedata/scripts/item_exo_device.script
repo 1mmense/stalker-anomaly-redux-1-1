@@ -217,6 +217,7 @@ function charge_exo(battery, suit, data)
         data.power = data.power + to_restore
         batt_power = batt_power - to_restore
 
+        -- Prevent exo batteries from disappearing, leave them on 1% energy instead
         data.power = data.power - 1
         batt_power = batt_power + 1
 
